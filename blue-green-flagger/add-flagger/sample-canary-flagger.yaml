@@ -1,0 +1,53 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: csharpdemo-rollout
+  namespace: default
+spec:
+  # service mesh provider can be: kubernetes, istio, appmesh, nginx, gloo
+  provider: kubernetes
+  # deployment reference
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: csharpdemo-deployment
+  # the maximum time in seconds for the canary deployment
+  # to make progress before rollback (default 600s)
+  progressDeadlineSeconds: 60
+  service:
+    port: 56789
+    targetPort: 80    
+  analysis:
+    # schedule interval (default 60s)
+    interval: 30s
+    # max number of failed checks before rollback
+    threshold: 2
+    # number of checks to run before rollback
+    iterations: 5
+    # Prometheus checks based on 
+    # http_request_duration_seconds histogram
+    metrics:
+      - name: csharpdemo-http-successful-rate
+        # minimum req success rate (non 5xx responses)
+        # percentage (0-100)
+        templateRef:
+          name: csharpdemo-http-successful-rate
+          namespace: default        
+        thresholdRange:
+          min: 99
+        interval: 1m
+    # acceptance/load testing hooks
+    webhooks:
+      - name: smoke-test
+        type: pre-rollout
+        url: http://flagger-loadtester.test/
+        timeout: 15s
+        metadata:
+          type: bash
+          cmd: "curl -s http://csharpdemo-deployment-canary.default.svc.cluster.local:56789/api/Values"
+      - name: load-test
+        url: http://flagger-loadtester.test/
+        timeout: 5s
+        metadata:
+          type: cmd
+          cmd: "hey -z 1m -q 10 -c 2 http://csharpdemo-deployment-canary.default.svc.cluster.local:56789/api/Values"

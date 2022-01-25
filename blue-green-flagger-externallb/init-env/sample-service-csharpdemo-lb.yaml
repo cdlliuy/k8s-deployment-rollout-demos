@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: csharpdemo-svc-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: csharpdemo
+  ports:
+    - protocol: TCP
+      port: 56789
+      targetPort: 80

@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: podmonitor-csharpdemo-primary
+  labels:
+    owner: campaignmt # to fulfill the podmonitorselector requirement of local prometheues operator installation
+spec:
+  selector:
+    matchLabels:
+      app: csharpdemo-primary
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - port: metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: podmonitor-csharpdemo-canary
+  labels:
+    owner: campaignmt # to fulfill the podmonitorselector requirement of local prometheues operator installation
+spec:
+  selector:
+    matchLabels:
+      app: csharpdemo
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - port: metrics

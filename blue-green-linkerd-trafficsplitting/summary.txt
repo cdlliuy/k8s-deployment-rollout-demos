@@ -1,0 +1,2 @@
+can do traffic spliting
+but we need to manual create serveral resources.

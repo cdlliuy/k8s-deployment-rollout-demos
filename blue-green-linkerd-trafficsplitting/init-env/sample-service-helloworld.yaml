@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld-svc
+spec:
+  selector:
+    app: helloworld
+  ports:
+    - protocol: TCP
+      port: 12345
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld-svc-green
+spec:
+  selector:
+    app: helloworld-green
+  ports:
+    - protocol: TCP
+      port: 12345
+      targetPort: 8080

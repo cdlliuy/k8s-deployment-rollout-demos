@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webapp-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true" #annotation required by linkerd
+spec:
+  rules:
+    # - host: kubernetes.docker.internal
+    #   http:
+    #     paths:
+    #       - path: /helloworld
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: helloworld-svc
+    #             port:
+    #               number: 12345
+    - host: localhost
+      http:
+        paths:
+          - path: /helloworld
+            pathType: Prefix
+            backend:
+              service:
+                name: helloworld-svc
+                port:
+                  number: 12345                  

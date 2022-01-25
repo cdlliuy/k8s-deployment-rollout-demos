@@ -1,0 +1,33 @@
+# this is not necessary for init-env. Just keep it here to make sure the cmd  `kubectl delete -f ./init-env` can remove all related resources of this demo
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld-deployment-green
+  labels:
+    app: helloworld-green
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 25%  
+  selector:
+    matchLabels:
+      app: helloworld-green
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled    
+      labels:
+        app: helloworld-green
+    spec:
+      containers:
+      - name: helloworld
+        image: helloworld
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: TARGET
+          value: "version1"

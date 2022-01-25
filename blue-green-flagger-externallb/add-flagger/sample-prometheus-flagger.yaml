@@ -1,0 +1,22 @@
+---
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+  name: csharpdemo-http-successful-rate
+  namespace: default
+spec:
+  provider:
+    address: http://prometheus-kube-prometheus-prometheus.monitoring:9090
+    type: prometheus
+  query: |
+    rate(
+      http_requests_received_total{
+        container="csharpdemo",
+        code=~"2.*"
+      }[1m]) 
+    / 
+    rate(
+      http_requests_received_total{
+        container="csharpdemo",
+      }[1m]
+    ) * 100

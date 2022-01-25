@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csharpdemo-deployment
+  labels:
+    app: csharpdemo
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 25%  
+  selector:
+    matchLabels:
+      app: csharpdemo
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
+        prometheus.io/path: "/metrics"
+      labels:
+        app: csharpdemo
+    spec:
+      shareProcessNamespace: true
+      containers:
+      - name: csharpdemo
+        image: cdlliuy/csharpdemo:piloting
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: metrics
+        env:
+        - name: target
+          value: "version3"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"

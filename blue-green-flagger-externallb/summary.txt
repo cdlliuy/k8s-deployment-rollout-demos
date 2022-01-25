@@ -1,0 +1,13 @@
+steps:
+1. install flagger  : image  ghcr.io/fluxcd/flagger:1.14.0 looks correct, but the latest version seems wrong
+2. kubectl apply -f ./init-env
+3. kubectl apply -f ./add-flagger
+4. update the deployment yaml
+
+do query with: 
+curl -s localhost:56789/api/Values | jq .
+
+summary:
+1. do blue-green rollout with validation automatically
+2. no traffic splitting
+3. rollout testing happens on the cluster-internal traffic only
